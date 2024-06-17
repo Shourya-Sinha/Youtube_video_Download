@@ -3,11 +3,14 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const ytdl = require('ytdl-core');
 const DataModel = require('./Model/Data');
+const path = require('path');
+//const __dirname = path.resolve();
 const app = exress();
 
 const PORT = 7000;
 
 app.use(cors());
+
 
 app.use(exress.json());
 const DB = 'mongodb+srv://shourya:shourya123@shourya-cluster.d6dznha.mongodb.net/UrlDataBase?retryWrites=true&w=majority&appName=Shourya-Cluster'
@@ -155,6 +158,11 @@ app.get('/download-counts', async (req, res) => {
 //     }
 //   });
   
+app.use(exress.static(path.join(__dirname, '../Frontend/dist')));
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../Frontend/dist', 'index.html'));
+});
 
 
 app.listen(PORT , () => {

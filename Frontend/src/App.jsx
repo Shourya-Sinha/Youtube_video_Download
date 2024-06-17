@@ -37,6 +37,7 @@ import {
 import "./App.css";
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
+import { useSnackbar } from "./SnackBarContext";
 
 const theme = createTheme({
   breakpoints: {
@@ -120,6 +121,17 @@ function App() {
   const throttleTimeoutRef = useRef(null);
   const [completedCount, setCompletedCount] = useState(0);
 const [inProgressCount, setInProgressCount] = useState(0);
+const enqueueSnackbar = useSnackbar();
+
+// const addError = (message) => {
+//   const id = new Date().getTime(); // Use current timestamp as unique ID
+//   setErrors((prevErrors) => [...prevErrors, { id, message }]);
+// };
+
+// const removeError = (id) => {
+//   setErrors((prevErrors) => prevErrors.filter((error) => error.id !== id));
+// };
+
 useEffect(() => {
   const fetchCounts = async () => {
     try {
@@ -130,9 +142,9 @@ useEffect(() => {
         setInProgressCount(data.inProgressCount);
     } catch (error) {
         console.error('Error fetching counts:', error);
-        setSnackbarMessage(`Error fetching counts: ${error.message}`);
-        setSnackbarSeverity('error');
-        setSnackbarOpen(true);
+        // setSnackbarMessage(`Error fetching counts: ${error.message}`);
+        // setSnackbarSeverity('error');
+        enqueueSnackbar(`Error fetching counts: ${error.message}`, 'error');
     }
 };
 
@@ -255,13 +267,14 @@ const handleDownload = async () => {
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
 
-      setSnackbarSeverity('success');
-      setSnackbarMessage('Download completed successfully!');
-      setOpenSnackbar(true);
+      // setSnackbarSeverity('success');
+      // setSnackbarMessage('Download completed successfully!');
+      // setOpenSnackbar(true);
+      enqueueSnackbar('Download completed successfully!', 'success');
   } catch (error) {
-      setSnackbarSeverity('error');
-      setSnackbarMessage(`Error in url or flag to premium video: ${error.message}`);
-      setOpenSnackbar(true);
+      // setSnackbarSeverity('error');
+      // setSnackbarMessage(`Error in url or flag to premium video: ${error.message}`);
+      enqueueSnackbar(`Error: ${error.message}`, 'error');
   } finally {
       setIsDownloading(false);
       setSpeed(0);
@@ -269,9 +282,9 @@ const handleDownload = async () => {
   }
 };
 
-const handleCloseSnackbar = () => {
-  setOpenSnackbar(false);
-};
+// const handleCloseSnackbar = () => {
+//   setOpenSnackbar(false);
+// };
 
 
   // Backend end
@@ -367,11 +380,39 @@ const handleCloseSnackbar = () => {
 
   return (
     <ThemeProvider theme={theme}>
-    <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+    {/* <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
         <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} variant="filled">
             {snackbarMessage}
         </Alert>
-    </Snackbar>
+    </Snackbar> */}
+     {/* {errors.map((error) => (
+      <Snackbar
+        key={error.id}
+        open={true}
+        autoHideDuration={6000}
+        onClose={() => removeError(error.id)}
+      >
+        <Alert
+          onClose={() => removeError(error.id)}
+          severity="error"
+          variant="filled"
+          sx={{ width: '100%' }}
+        >
+          {error.message}
+        </Alert>
+      </Snackbar>
+    ))}
+
+    <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+      <Alert
+        onClose={handleCloseSnackbar}
+        severity={snackbarSeverity}
+        variant="filled"
+        sx={{ width: '100%' }}
+      >
+        {snackbarMessage}
+      </Alert>
+    </Snackbar> */}
       <Box sx={{ flexGrow: 1 }}>
         <AppBar position="static">
           <Toolbar>
