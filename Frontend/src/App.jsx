@@ -136,7 +136,7 @@ useEffect(() => {
   const fetchCounts = async () => {
     try {
         // Replace with actual endpoint URL
-        const response = await fetch('http://localhost:7000/download-counts');
+        const response = await fetch('https://savefromnet.onrender.com/download-counts');
         const data = await response.json();
         setCompletedCount(data.completedCount);
         setInProgressCount(data.inProgressCount);
@@ -199,7 +199,7 @@ const handleDownload = async () => {
   startTimeRef.current = performance.now();
 
   try {
-      const response = await fetch('http://localhost:7000/download', {
+      const response = await fetch('https://savefromnet.onrender.com/download', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',
