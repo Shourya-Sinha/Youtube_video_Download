@@ -163,11 +163,11 @@ app.get('/download-counts', async (req, res) => {
 //     }
 //   });
   
-// app.use(exress.static(path.join(__dirname, '../Frontend/dist')));
+app.use(exress.static(path.join(__dirname, '../Frontend/dist')));
 
-// app.get('*', (req, res) => {
-//     res.sendFile(path.join(__dirname, '../Frontend/dist', 'index.html'));
-// });
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../Frontend/dist', 'index.html'));
+});
 
 
 app.listen(PORT , () => {
