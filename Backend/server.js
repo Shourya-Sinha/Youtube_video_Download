@@ -50,7 +50,11 @@ app.post('/download', async (req,res) =>{
 
         // Set response headers for file download
         //res.header('Content-Disposition', `attachment; filename="${info.title}.mp4"`);
-        res.header('Content-Disposition', `attachment; filename="${info.videoDetails.title}.mp4"`);
+        const sanitizedFileName = info.videoDetails.title.replace(/[^a-zA-Z0-9 ._-]/g, ''); // Replace invalid characters
+
+res.header('Content-Disposition', `attachment; filename="${sanitizedFileName}.mp4"`);
+
+        //res.header('Content-Disposition', `attachment; filename="${info.videoDetails.title}.mp4"`);
         res.header('Content-Type', 'video/mp4');
 
         const videoStream = ytdl(VideoLink, { format: format });
@@ -159,11 +163,11 @@ app.get('/download-counts', async (req, res) => {
 //     }
 //   });
   
-app.use(exress.static(path.join(__dirname, '../Frontend/dist')));
+// app.use(exress.static(path.join(__dirname, '../Frontend/dist')));
 
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../Frontend/dist', 'index.html'));
-});
+// app.get('*', (req, res) => {
+//     res.sendFile(path.join(__dirname, '../Frontend/dist', 'index.html'));
+// });
 
 
 app.listen(PORT , () => {

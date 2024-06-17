@@ -122,6 +122,7 @@ function App() {
   const [completedCount, setCompletedCount] = useState(0);
 const [inProgressCount, setInProgressCount] = useState(0);
 const enqueueSnackbar = useSnackbar();
+const [totalfilesize, setTotalFilesize] = useState(0);
 
 // const addError = (message) => {
 //   const id = new Date().getTime(); // Use current timestamp as unique ID
@@ -176,6 +177,7 @@ const formatTime = (seconds) => {
   }
 };
 
+
 const menuItems = [
   {
       label: 'File Served',
@@ -207,6 +209,7 @@ const handleDownload = async () => {
               'Content-Type': 'application/json',
           },
           body: JSON.stringify({ VideoLink }),
+          
       });
 
       if (!response.ok) {
@@ -214,16 +217,19 @@ const handleDownload = async () => {
       }
 
       const reader = response.body.getReader();
-      const contentLength = response.headers.get('Content-Length');
-      const disposition = response.headers.get('Content-Disposition');
-      let filename = 'downloaded_video.mp4'; // Default filename if not found
+      const contentLength = parseInt(response.headers.get('Content-Length') || '0', 10); // Parse as integer
+      const totalFileSize = formatFileSize(contentLength); 
+      console.log('totalfile size',totalFileSize);
+      setTotalFilesize(totalFileSize);
+      // const disposition = response.headers.get('Content-Disposition');
+      // let filename = 'downloaded_video.mp4'; // Default filename if not found
 
-      if (disposition) {
-          const match = disposition.match(/filename="?([^"]+)"?/);
-          if (match) {
-              filename = match[1];
-          }
-      }
+      // if (disposition) {
+      //     const match = disposition.match(/filename="?([^"]+)"?/);
+      //     if (match) {
+      //         filename = match[1];
+      //     }
+      // }
       let receivedLength = 0;
       const chunks = [];
       let prevTime = performance.now();
@@ -273,7 +279,12 @@ const handleDownload = async () => {
       //  //   ? response.headers.get('Content-Disposition').split('filename=')[1].replace(/"/g, '')
       //     : 'downloaded_video.mp4';
           
-      a.download = filename;
+      //a.download = filename;
+      const filename = response.headers.get('Content-Disposition')
+      ? response.headers.get('Content-Disposition').split('filename=')[1].replace(/"/g, '')
+      : 'downloaded_video.mp4';
+
+  a.download = filename;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
@@ -291,6 +302,7 @@ const handleDownload = async () => {
       setIsDownloading(false);
       setSpeed(0);
       setTimeRemaining(0);
+      setTotalFilesize(0);
   }
 };
 
@@ -537,8 +549,9 @@ const handleDownload = async () => {
               </Stack>
              
               
-            
+              
             <Typography>Download speed:{formatBytes(speed * 1024 * 1024)}/s </Typography>
+            <Typography>File Size: {totalfilesize}</Typography>
             <Typography>Estimated time remaining: {formatTime(timeRemaining)}</Typography>
             </Stack>
 
