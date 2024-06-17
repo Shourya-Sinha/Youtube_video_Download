@@ -149,11 +149,13 @@ useEffect(() => {
 };
 
 // Call fetchCounts on component mount
-
+const intervalId = setInterval(fetchCounts, 2000);
   fetchCounts();
-  const intervalId = setInterval(fetchCounts, 2000); // Poll every 5 seconds
+  //const intervalId = setInterval(fetchCounts, 2000); // Poll every 5 seconds
 
-  return () => clearInterval(intervalId); // Cleanup interval on unmount
+  return () => {
+    clearInterval(intervalId);
+};// Cleanup interval on unmount
 }, []);
 
 const formatBytes = (bytes) => {
@@ -213,6 +215,15 @@ const handleDownload = async () => {
 
       const reader = response.body.getReader();
       const contentLength = response.headers.get('Content-Length');
+      const disposition = response.headers.get('Content-Disposition');
+      let filename = 'downloaded_video.mp4'; // Default filename if not found
+
+      if (disposition) {
+          const match = disposition.match(/filename="?([^"]+)"?/);
+          if (match) {
+              filename = match[1];
+          }
+      }
       let receivedLength = 0;
       const chunks = [];
       let prevTime = performance.now();
@@ -251,15 +262,16 @@ const handleDownload = async () => {
       }
 
       const blob = new Blob(chunks);
+      //const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.style.display = 'none';
       a.href = url;
 
       // Optional: Get the filename from the response headers if needed
-      const filename = response.headers.get('Content-Disposition')
-          ? response.headers.get('Content-Disposition').split('filename=')[1].replace(/"/g, '')
-          : 'downloaded_video.mp4';
+      // const filename = response.headers.get('Content-Disposition')
+      //  //   ? response.headers.get('Content-Disposition').split('filename=')[1].replace(/"/g, '')
+      //     : 'downloaded_video.mp4';
           
       a.download = filename;
       document.body.appendChild(a);

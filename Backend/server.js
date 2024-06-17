@@ -49,7 +49,8 @@ app.post('/download', async (req,res) =>{
          const format =ytdl.chooseFormat(info.formats, { quality: 'highest' });
 
         // Set response headers for file download
-        res.header('Content-Disposition', `attachment; filename="${info.title}.mp4"`);
+        //res.header('Content-Disposition', `attachment; filename="${info.title}.mp4"`);
+        res.header('Content-Disposition', `attachment; filename="${info.videoDetails.title}.mp4"`);
         res.header('Content-Type', 'video/mp4');
 
         const videoStream = ytdl(VideoLink, { format: format });
